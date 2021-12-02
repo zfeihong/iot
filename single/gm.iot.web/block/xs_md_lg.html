@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+
+    <link href="../F/F.css" rel="stylesheet" />
+    <link href="../res/css/common.css" rel="stylesheet" />
+
+    <style>
+        body.f-body {
+            overflow-x: hidden;
+        }
+
+        .blockpanel {
+            min-height: 200px;
+        }
+    </style>
+
+</head>
+<body class="f-body-bgcolor">
+    <div id="wrap1">
+    </div>
+
+
+    <script src="../F/F.js"></script>
+    <script src="../res/js/common.js"></script>
+    <script>
+        F.ready(function () {
+
+            F.create({
+                type: 'panel', renderTo: '#wrap1', border: false, isFluid: true, header: false,
+                layout: {
+                    space: 20, type: 'block'
+                },
+                items: [{
+                    type: 'panel', cls: 'blockpanel', block: 6, blockMD: 4, blockLG: 3, title: '1'
+                }, {
+                    type: 'panel', cls: 'blockpanel', block: 6, blockMD: 8, blockLG: 3, title: '2'
+                }, {
+                    type: 'panel', cls: 'blockpanel', block: 12, blockMD: 8, blockLG: 3, title: '3'
+                }, {
+                    type: 'panel', cls: 'blockpanel', block: 6, blockMD: 4, blockLG: 3, title: '4'
+                }, {
+                    type: 'panel', cls: 'blockpanel', block: 6, blockMD: 12, blockLG: 9, title: '5'
+                }, {
+                    type: 'panel', cls: 'blockpanel', block: 12, blockMD: 6, blockLG: 3, title: '6'
+                }, {
+                    type: 'panel', cls: 'blockpanel', block: 6, blockMD: 6, blockLG: 6, title: '7'
+                }, {
+                    type: 'panel', cls: 'blockpanel', block: 6, blockMD: 12, blockLG: 6, title: '8'
+                }]
+            });
+
+
+
+
+        });
+    </script>
+</body>
+</html>

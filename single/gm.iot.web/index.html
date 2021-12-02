@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+    <title>智慧物联网平台</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+
+
+    <link href="./F/F.css" rel="stylesheet" />
+    <link href="./res/css/common.css" rel="stylesheet" />
+    <link href="./res/css/index.css" rel="stylesheet" />
+
+</head>
+<body>
+
+    <div id="wrap1"></div>
+
+    <div id="sideheader" class="f-widget-header f-mainheader" style="display:none;">
+        <a class="logo" href="./" title="物联网平台" id="logoTitle">物联网平台</a>
+    </div>
+
+    <div id="header" class="f-widget-header f-mainheader" style="display:none;">
+        <div class="header-left">
+            <div id="fold_wrap" class="f-inline-block"></div>
+        </div>
+        <div class="header-right">
+            <div id="search_wrap" class="f-inline-block"></div>
+            <div id="applytrial_wrap" class="f-inline-block"></div>
+            <div id="themeselect_wrap" class="f-inline-block"></div>
+            <div id="userprofile_wrap" class="f-inline-block"></div>
+        </div>
+    </div>
+
+
+    <div id="applytrial_container" style="display:none;">
+        <div>
+            请填写如下资料发送到邮箱：2877408506@qq.com
+        </div>
+        <ul class="applytrial">
+            <li>产品名称：F.js（企业版）</li>
+            <li>单位全称：XXX单位</li>
+            <li>申请人邮箱：XXX</li>
+            <li>申请人QQ：XXX</li>
+            <li>申请人姓名：XXX</li>
+            <li>申请人地址：XX省XX市</li>
+            <li>申请人电话：XXXXXXX</li>
+        </ul>
+    </div>
+
+
+    <script src="./F/F.js"></script>
+    <script src="./res/js/common.js"></script>
+    <script src="./res/menu.js"></script>
+    <script>
+        // 从 Cookie 中读取配置信息
+        var cookieThemeName = F.cookie('Theme') || 'bootstrap pure';
+        var cookieThemeTitle = F.cookie('Theme_Title');
+        var cookieMenuMode = F.cookie('MenuMode') || 'normal';
+        var cookieLanguage = F.cookie('Language');
+
+        var _sidebarWidth = 220;
+
+        // 展开侧边栏
+        function expandSidebar() {
+            toggleSidebar(false);
+        }
+
+        // 折叠侧边栏
+        function collapseSidebar() {
+            toggleSidebar(true);
+        }
+
+        // 折叠/展开侧边栏
+        function toggleSidebar(collapsed) {
+            var foldButton = F.ui.btnCollapseSidebar;
+            var sidebarRegion = F.ui.sidebarRegion;
+            var treeMenu = F.ui.treeMenu;
+            var logoEl = sidebarRegion.el.find('.logo');
+
+            var currentCollapsed = foldButton.iconFont === 'f-iconfont-unfold';
+            if (F.isUND(collapsed)) {
+                collapsed = !currentCollapsed;
+            } else {
+                if (currentCollapsed === collapsed) {
+                    return;
+                }
+            }
+
+            F.noAnimation(function () {
+                if (!collapsed) {
+                    foldButton.setIconFont('f-iconfont-fold');
+
+                    logoEl.removeClass('short').text(logoEl.attr('title'));
+                    sidebarRegion.setWidth(_sidebarWidth);
+                    // 启用分隔条拖动
+                    sidebarRegion.setSplitDraggable(true);
+
+                    // 禁用树微型模式
+                    treeMenu.miniMode = false;
+                    // 重新加载树菜单
+                    treeMenu.loadData();
+
+                } else {
+                    foldButton.setIconFont('f-iconfont-unfold');
+
+                    logoEl.addClass('short').text('IOT');
+                    sidebarRegion.setWidth(60);
+                    // 禁用分隔条拖动
+                    sidebarRegion.setSplitDraggable(false);
+
+                    // 启用树微型模式
+                    treeMenu.miniMode = true;
+                    // 重新加载树菜单
+                    treeMenu.loadData();
+
+                }
+            });
+        }
+
+
+        // 添加示例标签页（通过href在树中查找）
+        function addExampleTabByHref(href) {
+            var mainTabStrip = F.ui.mainTabStrip;
+            var treeMenu = F.ui.treeMenu;
+
+            F.addMainTabByHref(mainTabStrip, treeMenu, href);
+        }
+
+        // 公开方法 - 添加选项卡
+        // id： 选项卡ID
+        // iframeUrl: 选项卡IFrame地址
+        // title： 选项卡标题
+        // icon： 选项卡图标
+        // iconFont： 选项卡图标字体
+        // refreshWhenExist： 添加选项卡时，如果选项卡已经存在，是否刷新内部IFrame
+        function addExampleTab(tabOptions) {
+            var mainTabStrip = F.ui.mainTabStrip;
+            F.addMainTab(mainTabStrip, tabOptions);
+        }
+
+
+        // 公开方法 - 移除激活标签页
+        function removeActiveTab() {
+            var mainTabStrip = F.ui.mainTabStrip;
+            mainTabStrip.getActiveTab().hide();
+        }
+
+        // 示例数
+        function getExamplesCount() {
+            return F.ui.treeMenu.getNodeCount(true);
+        }
+
+        function checkSidebarStatus() {
+            var windowWidth = $(window).width();
+            if (windowWidth < 992) {
+                collapseSidebar();
+            } else if (windowWidth > 1200) {
+                expandSidebar();
+            }
+        }
+
+
+        F.ready(function () {
+
+            // 顶部 - 折叠/展开侧边栏
+            F.create({
+                type: 'button', id: 'btnCollapseSidebar', renderTo: '#fold_wrap', cls: 'icononlyaction', defaultState: false, defaultCorner: false, tabIndex: -1, tooltip: '折叠/展开侧边栏', tooltipType: 'qtip', iconFont: 'f-iconfont-fold', iconAlign: 'top',
+                listeners: {
+                    click: function (event) {
+                        toggleSidebar();
+                    }
+                }
+            });
+
+            // 顶部 - 搜索框
+            F.create({
+                type: 'triggerbox', id: 'ttbxSearch', renderTo: '#search_wrap', cls: 'searchbox collapsed', width: 24, hideLabel: true, emptyText: '搜索示例', trigger1Hidden: true, trigger1Cls: 'f-triggericon-clear', trigger2Cls: 'f-triggericon-search',
+                listeners: {
+                    trigger1click: function (event) {
+                        F.removeCookie('SearchText');
+                        top.window.location.reload();
+                    },
+                    trigger2click: function (event) {
+                        var ttbxSearch = this;
+                        if (ttbxSearch.el.hasClass('collapsed')) {
+                            ttbxSearch.el.removeClass('collapsed').addClass('expanded').outerWidth(200);
+                        } else {
+                            var ttbxSearchValue = ttbxSearch.getValue();
+                            if (ttbxSearchValue) {
+                                F.cookie('SearchText', this.getValue(), {
+                                    expires: 100 // 单位：天
+                                });
+                                top.window.location.reload();
+                            }
+                        }
+                    },
+                    blur: function (event) {
+                        var ttbxSearch = this;
+                        if (!ttbxSearch.getValue()) {
+                            ttbxSearch.el.removeClass('expanded').addClass('collapsed').outerWidth(24);
+                        }
+                    }
+                }
+            });
+
+            // 顶部 - 企业版试用
+            F.create({
+                type: 'button', renderTo: '#applytrial_wrap', cls: 'icononlyaction btn-apply-trial', defaultState: false, defaultCorner: false, tabIndex: -1, tooltip: '企业版试用', tooltipType: 'qtip', iconFont: 'f-iconfont-mail', iconAlign: 'top',
+                badge: true, badgeType: 'warning', badgeAnimationType: 'processing',
+                listeners: {
+                    click: function (event) {
+                        F.ui.applytrialwindow.show();
+                    }
+                }
+            });
+
+            // 顶部 - 主题仓库
+            F.create({
+                type: 'button', renderTo: '#themeselect_wrap', cls: 'icononlyaction', defaultState: false, defaultCorner: false, tabIndex: -1, tooltip: '主题仓库', tooltipType: 'qtip', iconFont: 'f-iconfont-skin', iconAlign: 'top',
+                listeners: {
+                    click: function (event) {
+                        F.ui.themewindow.show();
+                    }
+                }
+            });
+
+
+            // 顶部 - 当前用户头像
+            F.create({
+                type: 'button', renderTo: '#userprofile_wrap', cls: 'userpicaction', defaultState: false, defaultCorner: false, text: 'jackyfei', icon: './res/images/my_face_80.png',
+                menu: {
+                    type: 'menu',
+                    listeners: {
+                        render: function (event) {
+                            // 初始化 - 显示模式
+                            $.each(F.ui.menuMode.items, function (index, item) {
+                                if (item.getAttr('tag') === cookieMenuMode) {
+                                    item.setChecked(true);
+                                    return false; // break
+                                }
+                            });
+                            // 初始化 - 语言
+                            $.each(F.ui.menuLang.items, function (index, item) {
+                                if (item.getAttr('tag') === cookieLanguage) {
+                                    item.setChecked(true);
+                                    return false; // break
+                                }
+                            });
+                        }
+                    },
+                    items: [{
+                        type: 'menuitem', text: '显示模式',
+                        menu: {
+                            type: 'menu', id: 'menuMode',
+                            items: [{
+                                type: 'menucheckbox', text: '紧凑模式', checked: false, group: 'MenuMode', attrs: { tag: 'compact' }
+                            }, {
+                                type: 'menucheckbox', text: '小字体模式', checked: false, group: 'MenuMode', attrs: { tag: 'small' }
+                            }, {
+                                type: 'menucheckbox', text: '普通模式', checked: true, group: 'MenuMode', attrs: { tag: 'normal' }
+                            }, {
+                                type: 'menucheckbox', text: '大字体模式', checked: false, group: 'MenuMode', attrs: { tag: 'large' }
+                            }, {
+                                type: 'menucheckbox', text: '大间距模式', checked: false, group: 'MenuMode', attrs: { tag: 'largeSpace' }
+                            }],
+                            listeners: {
+                                checkchange: function (event, item, checked) {
+                                    F.cookie('MenuMode', item.getAttr('tag'), {
+                                        expires: 100 // 单位：天
+                                    });
+                                    top.window.location.reload();
+                                }
+                            }
+                        }
+                    }, {
+                        type: 'menuitem', text: '语言',
+                        menu: {
+                            type: 'menu', id: 'menuLang',
+                            items: [{
+                                type: 'menucheckbox', text: '简体中文', checked: true, group: 'MenuLang', attrs: { tag: 'zh_CN' }
+                            }, {
+                                type: 'menucheckbox', text: '繁體中文', checked: false, group: 'MenuLang', attrs: { tag: 'zh_TW' }
+                            }, {
+                                type: 'menucheckbox', text: 'English', checked: false, group: 'MenuLang', attrs: { tag: 'en' }
+                            }, {
+                                type: 'menucheckbox', text: 'ئۇيغۇر تىلى', checked: false, group: 'MenuLang', attrs: { tag: 'zh_UEY' }
+                            }],
+                            listeners: {
+                                checkchange: function (event, item, checked) {
+                                    F.cookie('Language', item.getAttr('tag'), {
+                                        expires: 100 // 单位：天
+                                    });
+                                    top.window.location.reload();
+                                }
+                            }
+                        }
+                    }, {
+                        type: 'menuitem', text: '加载动画',
+                        listeners: {
+                            click: function (event) {
+                                F.ui.loadingwindow.show();
+                            }
+                        }
+                    }, '-', {
+                        type: 'menuitem', text: 'FineUI Pro 示例', href: 'http://pro.fineui.com/', hrefTarget: '_blank'
+                    }, {
+                        type: 'menuitem', text: 'FineUI MVC 示例', href: 'http://mvc.fineui.com/', hrefTarget: '_blank'
+                    }, {
+                        type: 'menuitem', text: 'FineUI Core 示例', href: 'http://core.fineui.com/', hrefTarget: '_blank'
+                    }, '-', {
+                        type: 'menuitem', cls: 'copyright-menutext', hideOnClick: false, text: "<div class=\"copyright\">" +
+                            "<div class=\"version\"><a target=\"_blank\" href=\"http://fineui.com/js/\"><img src=\"./res/images/logo/logo_small.png\" alt=\"logo\"/></a>" +
+                            "<br/><span>F.js v" + F.fineui + "</span></div>" +
+                            "<div class=\"actions\"><a target=\"_blank\" href=\"http://wpa.qq.com/msgrd?v=3&uin=2877408506&site=qq&menu=yes\">在线咨询</a>" +
+                            "&nbsp;&nbsp;&nbsp;&nbsp;<a target=\"_blank\" href=\"http://fineui.com/js/version/\">更新记录</a></div>" +
+                            "</div>"
+                    }]
+                }
+            });
+
+
+            // 中间 - 选项卡右侧工具图标列表
+            var mainTabStripTools = [{
+                type: 'tool', cls: 'tabtool viewcode', tooltip: '查看源代码', iconFont: 'f-iconfont-code', 
+                handler: function (event) {
+                    var mainTabStrip = F.ui.mainTabStrip;
+                    var windowSourceCode = F.ui.sourcecodewindow;
+
+
+                    var activeTab = mainTabStrip.getActiveTab();
+                    var iframeWnd, iframeUrl;
+                    if (activeTab.iframe) {
+
+                        iframeWnd = activeTab.getIFrameWindow();
+                        iframeUrl = activeTab.getIFrameUrl();
+
+                    } else {
+                        iframeWnd = window;
+                        iframeUrl = './index.html';
+                    }
+
+                    var files = [iframeUrl];
+                    var sourcefilesNode = $(iframeWnd.document).find('head meta[name=sourcefiles]');
+                    if (sourcefilesNode.length) {
+                        $.merge(files, sourcefilesNode.attr('content').split(';'));
+                    }
+                    windowSourceCode.show('./common/source.html?files=' + encodeURIComponent(files.join(';')));
+                }
+            }, {
+                type: 'tool', id: 'toolrefresh', cls: 'tabtool', tooltip: '刷新', iconFont: 'f-iconfont-refresh', 
+                handler: function (event) {
+                    var mainTabStrip = F.ui.mainTabStrip;
+
+                    var activeTab = mainTabStrip.getActiveTab();
+                    if (activeTab.iframe) {
+                        var iframeWnd = activeTab.getIFrameWindow();
+                        iframeWnd.location.reload();
+                    }
+                }
+            }, {
+                type: 'tool', id: 'toolnewtab', cls: 'tabtool', tooltip: '在新标签页中打开', iconFont: 'f-iconfont-new-tab', 
+                handler: function (event) {
+                    var mainTabStrip = F.ui.mainTabStrip;
+
+                    var activeTab = mainTabStrip.getActiveTab();
+                    if (activeTab.iframe) {
+                        var iframeUrl = activeTab.getIFrameUrl();
+                        iframeUrl = iframeUrl.replace(/\/mobile\/\?file=/ig, '/mobile/');
+                        window.open(iframeUrl, '_blank');
+                    }
+                }
+            }];
+
+
+            // 创建页面主体框架
+            F.create({
+                type: 'viewport', renderTo: '#wrap1', layout: 'region', cls: 'mainpanel',
+                items: [{
+                    type: 'panel', id: 'sidebarRegion', cls: 'sidebarregion bgpanel', width: 220, region: 'left', layout: 'vbox', border: false, header: false, split: true, splitIcon: false, splitWidth: 3, splitTransparent: true,
+                    listeners: {
+                        splitdrag: function (event) {
+                            _sidebarWidth = this.width;
+                        }
+                    },
+                    items: [{
+                        type: 'panel', cls: 'topregion', contentEl: '#sideheader', border: false, header: false
+                    }, {
+                        type: 'panel', cls: 'leftregion', flex: 1, layout: 'fit', header: false,
+                        items: [{
+                            type: 'tree', id: 'treeMenu', cls: 'leftregion', header: false,
+                            hideHScrollbar: true, hideVScrollbar: true, expanderToRight: true, headerStyle: true, allHeaderStyle: true, singleClickExpand: true,
+                            rootNode: {
+                                expanded: true, children: MENUS
+                            }
+                        }]
+                    }]
+                }, {
+                    type: 'panel', id: 'bodyRegion', cls: 'bodyregion', region: 'center', layout: 'vbox', border: false, header: false,
+                    items: [{
+                        type: 'panel', cls: 'topregion', contentEl: '#header', border: false, header: false
+                    }, {
+                        type: 'tabstrip', id: 'mainTabStrip', cls: 'centerregion', inkBar: true, flex: 1, activeTabIndex: 0, enableCloseMenu: true,
+                        items: [{
+                            type: 'tab', iframe: true, iframeUrl: './block/dashboard.html', title: '首页', iconFont: 'f-iconfont-home'
+                        }],
+                        tools: mainTabStripTools
+                    }]
+                }]
+            });
+
+
+
+            // 窗口 - 查看源代码
+            F.create({
+                type: 'window', id: 'sourcecodewindow', width: 980, height: 600, resizable: true, maximizable: true, title: '源代码', iconFont: 'f-iconfont-code', iframe: true, hidden: true
+            });
+
+            // 窗口 - 主题选择
+            F.create({
+                type: 'window', id: 'themewindow', width: 1000, height: 600, resizable: true, maximizable: true, minHeight: 100, minWidth: 200, title: '主题仓库', hidden: true, iframe: true, iframeUrl: './common/themes.html'
+            });
+
+            // 窗口 - 加载动画
+            F.create({
+                type: 'window', id: 'loadingwindow', width: 1000, height: 600, resizable: true, maximizable: true, minHeight: 100, minWidth: 200, title: '加载动画', hidden: true, iframe: true, iframeUrl: './common/loading.html'
+            });
+
+            // 窗口 - 企业版试用
+            F.create({
+                type: 'window', id: 'applytrialwindow', bodyPadding: 15, width: 450, resizable: false, maximizable: false, title: '企业版试用', hidden: true, iconFont: 'f-iconfont-mail', contentEl: '#applytrial_container'
+            });
+
+
+
+            var treeMenu = F.ui.treeMenu, mainTabStrip = F.ui.mainTabStrip;
+
+            // 初始化主框架中的树(或者Accordion+Tree)和选项卡互动，以及地址栏的更新
+            // treeMenu： 主框架中的树控件实例，或者内嵌树控件的手风琴控件实例
+            // mainTabStrip： 选项卡实例
+            // updateHash: 切换Tab时，是否更新地址栏Hash值（默认值：true）
+            // refreshWhenExist： 添加选项卡时，如果选项卡已经存在，是否刷新内部IFrame（默认值：false）
+            // refreshWhenTabChange: 切换选项卡时，是否刷新内部IFrame（默认值：false）
+            // maxTabCount: 最大允许打开的选项卡数量
+            // maxTabMessage: 超过最大允许打开选项卡数量时的提示信息
+            // beforeNodeClick: 节点点击事件之前执行（返回false则不执行点击事件）
+            F.initTreeTabStrip(treeMenu, mainTabStrip, {
+                maxTabCount: 10,
+                maxTabMessage: '请先关闭一些选项卡（最多允许打开 10 个）！',
+                beforeNodeClick: function (event, nodeId) {
+                    var nodeEl = treeMenu.getNodeEl(nodeId);
+                    var nodeTag = nodeEl.attr('data-tag');
+                    var nodeData = treeMenu.getNodeData(nodeId);
+                    if (nodeTag === 'pop-window1') {
+                        F.ui.themewindow.show();
+                        return false;
+                    } else if (nodeTag === 'newtab') {
+                        window.open(nodeData.href, '_blank');
+                        return false;
+                    }
+                },
+                beforeTabAdd: function (event, tabOptions, nodeId) {
+                    var nodeEl = treeMenu.getNodeEl(nodeId);
+                    var nodeTag = nodeEl.attr('data-tag');
+                    if (nodeTag === 'custom-title') {
+                        var parentNode = treeMenu.getParentData(nodeId);
+                        tabOptions.title = parentNode.text + ' - ' + nodeEl.text();
+                    }
+                }
+
+            });
+
+			// 移动端不检查左侧面板的折叠状态
+			if (!F.isMobile()) {
+				// 根据屏幕尺寸展开折叠侧边栏
+				F.windowResize(function () {
+					checkSidebarStatus();
+				});
+
+				checkSidebarStatus();
+			}
+
+
+            // 如果地址哈希值不存在，则添加响应式首页
+            var hashFragment = window.location.hash.substr(1);
+            if (!hashFragment || hashFragment.indexOf('/common/main.html') >= 0) {
+                addExampleTabByHref("/block/dashboard.html");
+            }
+
+        });
+
+
+    </script>
+
+	
+</body>
+</html>

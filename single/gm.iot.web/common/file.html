@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+    <link href="../F/F.css" rel="stylesheet" />
+    <link href="../res/google-code-prettify/prettify.css" rel="stylesheet" />
+
+    <script src="../res/google-code-prettify/prettify.js"></script>
+    <script src="../res/google-code-prettify/lang-basic.js"></script>
+
+    <style>
+        .f-body {
+            margin: 0;
+            padding: 0;
+            font-size: 13px;
+            background-color: White;
+        }
+
+        pre.prettyprint {
+            border: none;
+            margin: 0;
+            padding: 10px 5px;
+            color: #666;
+            font-family: Consolas, Courier New, monospace;
+        }
+
+        li.L0, li.L1, li.L2, li.L3, li.L4,
+        li.L5, li.L6, li.L7, li.L8, li.L9 {
+            list-style-type: decimal !important;
+            background-color: #fff;
+        }
+    </style>
+
+</head>
+<body>
+
+
+    <pre id="prettyprint" class="prettyprint linenums"></pre>
+
+
+    <script src="../F/F.js"></script>
+    <script src="../res/js/common.js"></script>
+    <script>
+        F.ready(function () {
+
+            // ./tree/tree.html
+            // ./mobile/?file=button/buttongroup_vertical.html
+            var filePath = decodeURIComponent(document.location.search.substr('?path='.length));
+
+            var mobileToken = '/mobile/?file=';
+            var mobileTokenIndex = filePath.indexOf(mobileToken);
+            if (mobileTokenIndex >= 0) {
+                filePath = 'mobile/' + filePath.substr(mobileTokenIndex + mobileToken.length);
+            }
+
+            $.ajax({
+                url: '../' + filePath, type: 'GET', dataType: 'text', success: function (data) {
+                    $('#prettyprint').text(data.replace(/\t/ig, '    '));
+
+                    prettyPrint();
+                }
+            });
+
+
+
+
+        });
+    </script>
+</body>
+</html>

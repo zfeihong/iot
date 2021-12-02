@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/f/f.css">
+    <link rel="stylesheet" href="/res/css/common.css">
+    <link rel="stylesheet" href="/style/tagCategory.css">
+    <title>位置信息</title>
+</head>
+
+<body>
+    <div id="mapContainer">
+        <div id="mapRight"></div>
+    </div>
+
+    <script src="/plugins/es6-promise.auto.min.js"></script>
+    <script src="/plugins/es6-promise.min.js"></script>
+    <script src="/f/f.js"></script>
+    <script src="/res/js/common.js"></script>
+    <script src="/plugins/axios.min.js"></script>
+    <script src="/api/index.js"></script>
+    <script>
+        F.ready(function() {
+            var treeNodes = [];
+            var Codes; // 当前节点的pCode
+            var nodeCode; // 当前节点的code
+            var nodeData;
+            var DATA = {};
+            var type; // 添加或者编辑类型
+            var menuType; // 菜单类型 0系统  1单元  2楼层
+            var nodeTypes = 0; // 添加时菜单的类型
+            var dataURL = BASEURL + '/api/location/list';
+            // 保存当前菜单对应的树节点ID
+            var currentNodeId;
+            var formCont = {}; // 查询条件
+
+            // 设置所有菜单项的禁用状态
+            function setMenuItemsDisabled(disabled) {
+                var menu = F.ui.menu1;
+                $.each(menu.items, function(index, item) {
+                    item.setDisabled(disabled);
+                });
+            }
+
+            // 获取位置类别树
+            function getTreeList() {
+                SERVER.getList('location/tree', {
+                    level: 2
+                }).then(function(res) {
+                    treeNodes = res.data.data
+                        //(treeNodes)
+                    F.ui.tree1.loadData(treeNodes)
+                })
+            }
+            getTreeList()
+
+
+            // 查询树结构
+            function getTreeData(name) {
+                if (name != undefined && name != '') {
+                    SERVER.getList('location/tree1', {
+                        name: name,
+                        isLocInfo: false
+                    }).then(function(res) {
+                        if (res.data.code === 200) {
+                            F.ui.tree1.loadData(res.data.data);
+                        }
+                    })
+                } else {
+                    SERVER.getList('location/tree', {
+                        level: 2
+                    }).then(function(res) {
+                        if (res.data.code === 200) {
+                            if (formCont.pLocId != undefined) {
+                                F.ui.tree1.deselectNode(formCont.pLocId);
+                                delete formCont.pLocId
+                            }
+                            F.ui.tree1.loadData(res.data.data);
+                            F.ui.grid1.clearData();
+                        }
+                    })
+                }
+            }
+
+
+            F.ui({
+                type: 'panel',
+                renderTo: '#mapContainer',
+                layout: 'region',
+                width: '100%',
+                bodyPadding: 5,
+                isViewPort: true,
+                autoScroll: true,
+                border: false,
+                title: '',
+                header: false,
+                items: [{
+                    // type: 'accordion',
+                    width: 200,
+                    region: 'left',
+                    split: true,
+                    splitHeaderCls: false,
+                    border: true,
+                    title: '位置分类',
+                    collapsible: true,
+                    layout: 'vbox',
+                    items: [{
+                        type: 'triggerbox',
+                        id: 'triggerbox1',
+                        margin: 5,
+                        hideLabel: true,
+                        emptyText: '请输入',
+                        trigger1Hidden: false,
+                        trigger1Cls: 'f-triggericon-clear',
+                        trigger2Cls: 'f-triggericon-search',
+                        onTrigger1Click: function(event) {
+                            this.setValue('');
+                            this.hideTrigger1();
+                            F.ui.tree1.autoLeafIdentification = false;
+                            getTreeData();
+                        },
+                        onTrigger2Click: function(event) {
+                            this.showTrigger1();
+                            if (this.getValue() != '') {
+                                F.ui.tree1.autoLeafIdentification = true;
+                            }
+                            getTreeData(this.getValue());
+                        }
+                    }, {
+                        type: 'tree',
+                        id: 'tree1',
+                        region: 'left',
+                        header: false,
+                        border: false,
+                        width: 200,
+                        flex: 1,
+                        minWidth: 200,
+                        collapsible: true,
+                        autoLeafIdentification: false,
+                        rootNode: {
+                            expanded: true,
+                            children: treeNodes
+                        },
+                        listeners: {
+                            // 点击节点时请求DATA数据
+                            nodeclick: function(event, nodeId) {
+                                var nodeData = this.getNodeData(nodeId);
+                                F.ui.grid1.clearSelection()
+                                nodeCode = nodeData.id;
+                                formCont.pLocId = nodeCode;
+                                nodeTypes = nodeData.level - 1;
+                                nodeCode = nodeId
+                                formCont.isall = false;
+                                F.ui.grid1.loadDataUrl(BASEURL + '/api/location/list', formCont)
+
+                            },
+                            // 异步加载树结构
+                            nodelazyload: function(event, nodeId) {
+                                SERVER.getList('location/tree', {
+                                    locId: nodeId,
+                                    level: 2,
+                                }).then(function(res) {
+                                    if (res.data.code === 200) {
+                                        F.ui.tree1.loadData(nodeId, res.data.data)
+                                    } else {
+                                        showNotify(res.data.msg)
+                                    }
+                                })
+                            }
+                        }
+                    }]
+                }, {
+                    type: 'grid',
+                    id: 'grid1',
+                    renderTo: '#mapRight',
+                    region: 'center',
+                    title: '具体位置信息',
+                    collapsible: true,
+                    checkboxSelect: true,
+                    multiSelect: false,
+                    showSelectedCell: true,
+                    autoSelectEditor: true,
+                    enterNavigate: true,
+                    enterVerticalNavigate: true,
+                    databasePaging: true,
+                    //cellEditing: true,
+                    filters: true,
+                    paging: true,
+                    emptyText: '暂无数据！',
+                    flex: 1,
+                    pageSize: 20,
+                    pageIndex: 0,
+                    columns: [{
+                        columnType: 'rownumberfield',
+                        align: 'center',
+                        text: '#'
+                    }, {
+                        text: '位置ID',
+                        field: 'locId',
+                        width: 200,
+                       // editable: true
+                    }, {
+                        text: '位置编码',
+                        field: 'code',
+                        width: 200,
+                       // editable: true
+                    }, {
+                        text: '具体位置',
+                        field: 'name',
+                        flex: 1,
+                       // editable: true
+                    }],
+                    idField: 'locId',
+                    textField: 'code',
+                    parentIdField: 'sort',
+                    dataUrl: [],
+                    pagingbar: {
+                        type: 'pagingtoolbar',
+                        items: ['-', {
+                            type: 'toolbartext',
+                            text: '每页记录数：'
+                        }, {
+                            type: 'dropdownlist',
+                            editable: true,
+                            width: 65,
+                            data: ['10', '20', '50', '100'],
+                            value: '20',
+                            listeners: {
+                                change: function() {
+                                    var grid1 = F.ui.grid1;
+                                    grid1.setPageSize(this.getValue());
+                                    grid1.loadDataUrl(BASEURL + '/api/location/list', formCont);
+                                }
+                            }
+                        }]
+                    },
+                    bars: [{
+                        type: 'toolbar',
+                        align: 'left',
+                        position: 'top',
+                        items: [{
+                            type: 'button',
+                            text: '添加',
+                            iconFont: 'f-icon-plus-circle',
+                            handler: function() {
+                                if (!F.ui.grid1.hasSelection()) {
+                                    F.ui({
+                                        type: 'messagebox',
+                                        messageType: 'alert',
+                                        title: '温馨提示',
+                                        message: '没有选中项！',
+                                    });
+                                    return false;
+                                };
+                                var locID = F.ui.grid1.getSelectedRows().join(',');
+                                localStorage.setItem('locID', locID);
+                                var rowData = F.ui.grid1.getRowData(locID)
+                                F.activeWindow.hideExecuteScript('setTextBox1Value("' + rowData.values.locId + "locName" + rowData.values.name + '");');
+                            }
+                        }]
+                    }],
+                    listeners: {
+                        paging: function(event, pageIndex) {
+                            var grid1 = F.ui.grid1;
+                            // 点击下一页时判断查询子节点或者全部数据
+                            if (nodeCode != undefined || F.ui.tree1.getSelectedNodes(true).length > 0) {
+                                formCont.nodeCode = nodeCode;
+                                formCont.isall = false;
+                            } else {
+                                delete formCont.nodeCode;
+                                formCont.isall = true;
+                            }
+                            grid1.loadDataUrl(BASEURL + '/api/location/list', formCont);
+                        }
+                    }
+                }],
+
+            });
+
+        })
+    </script>
+</body>
+
+</html>

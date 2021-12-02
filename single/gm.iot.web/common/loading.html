@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+    <link href="../F/F.css" rel="stylesheet" />
+    <link href="../res/css/common.css" rel="stylesheet" />
+
+    <style>
+        body.f-body {
+            padding: 10px;
+        }
+
+        ul.loading {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            ul.loading li {
+                display: inline-block;
+                margin: 5px;
+                text-align: center;
+                border-style: solid;
+                border-width: 0;
+                padding: 11px 6px;
+                width: 150px;
+                cursor: pointer;
+            }
+
+                ul.loading li.hover,
+                ul.loading li.active {
+                    border-width: 3px;
+                    padding: 8px 3px;
+                }
+
+                ul.loading li .title {
+                    margin-top: 10px;
+                }
+    </style>
+
+
+</head>
+<body>
+
+    <div id="wrap1"></div>
+
+
+    <script src="../F/F.js"></script>
+    <script src="../res/js/common.js"></script>
+
+    <script>
+        F.ready(function () {
+
+            // 初始化
+            var html = [];
+            html.push("<ul class=\"loading\">");
+            for (var i = 0; i < 30; i++) {
+                var imageUrl = F.getLoadingImageUrl(i);
+                html.push('<li class=\"f-widget-content\"><img src=\"' + imageUrl + '\"><div class=\"title\">' + i + '</div></li>');
+            }
+            html.push("</ul>");
+            $('#wrap1').html(html.join(''));
+
+
+            // 选择主题窗口
+            $('ul.loading li').hover(function () {
+                $(this).addClass('hover');
+            }, function () {
+                $(this).removeClass('hover');
+            }).click(function () {
+                var loadingImageIndex = $(this).find('.title').text();
+
+                F.cookie('Loading', loadingImageIndex, {
+                    expires: 100  // 单位：天
+                });
+
+                top.window.location.reload();
+            });
+
+
+            // 初始化
+            var loadingImageIndex = F.cookie('Loading');
+            if (!loadingImageIndex) {
+                loadingImageIndex = '0';
+            }
+            $('ul.loading li').each(function () {
+                var cnode = $(this);
+                if (cnode.find('.title').text() === loadingImageIndex) {
+                    cnode.addClass('active');
+                } else {
+                    cnode.removeClass('active');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

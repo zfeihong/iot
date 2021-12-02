@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+    <link href="/f/f.css" rel="stylesheet" />
+    <link href="/res/css/common.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <div id="wrap1"></div>
+
+    <script src="/f/f.js"></script>
+    <script src="/res/js/common.js"></script>
+    <script src="/plugins/es6-promise.auto.min.js"></script>
+    <script src="/plugins/es6-promise.min.js"></script>
+    <script src="/plugins/axios.min.js"></script>
+    <script src="/api/index.js"></script>
+    <script>
+        F.ready(function () {
+            var type = F.queryString('type');
+            var categorySubId = F.queryString('categorySubId');
+            var nodes = [];
+
+
+            F.ui({
+                id: 'form',
+                type: 'form',
+                renderTo: '#wrap1',
+                collapsible: true,
+                border: false,
+                header: false,
+                isViewPort: true,
+                bodyPadding: 5,
+                fieldDefaults: {
+                    labelAlign: 'right',
+                    labelWidth: 110
+                },
+                items: [{
+                    type: 'panel',
+                    layout: 'vbox',
+                    border: false,
+                    with:40,
+                    header: false,
+                    items: [{
+                        id: 'productName',
+                        type: 'textbox',
+                        fieldLabel: '产品名称',
+                        emptyText: '请输入产品名称',
+                        marginRight: 10,
+                    }, {
+                            id: 'productType', type: 'dropdownlist', fieldLabel: '所属品类', columnWidth: 0.25, emptyText: '智慧建筑', value: '',
+                            data: [['false', '智慧建筑'], ['true', '智能园区'], ['true', '智能电力'], ['true', '智能农业'], ['true', '智能城市']]
+                        }, {
+                            id: 'nodeType', type: 'dropdownlist', fieldLabel: '节点类型', columnWidth: 0.25, emptyText: '直连设备', value: '',
+                            data: [['true', '直连设备'], ['true', '网关子设备'], ['false', '网关设备']]
+                        },  {
+                            id: 'linkType', type: 'dropdownlist', fieldLabel: '连网方式', columnWidth: 0.25, emptyText: 'Wifi', value: '',
+                            data: [['true', 'Wifi'], ['false', '窝蜂'], ['false', '以太网'], ['false', 'LoRaWAN'], ['false', '其他']]
+                        },  {
+                            id: 'dataFmt', type: 'dropdownlist', fieldLabel: '数据格式', columnWidth: 0.25, emptyText: 'ICA标准格式(JSON)', value: '',
+                            data: [['true', 'ICA标准格式(JSON)'], ['false', '透传/自定义']]
+                        }, {
+                        id: 'remark',
+                        type: 'textarea',
+                        fieldLabel: '产品描述',
+                        emptyText: '请输入产品描述',
+                        marginRight: 10,
+
+                    }]
+                }, {
+                        type: 'button',
+                        text: '保存',
+                        marginLeft: 20,
+                        iconFont: 'f-icon-save',
+                        validateForm: 'form',
+                        handler: function () {
+                            var formCont = {};
+                            var formData = F.ui.form.getFormFields();
+                            var ids = formData.map(function (item) {
+                                return item.id
+                            });
+                            ids.map(function (item) {
+                                if (F.ui[item].getValue() === '') {
+                                    return
+                                }
+                                var field = item.replace(/^LT/, '');
+                                formCont[field] = F.ui[item].getValue();
+                            })
+
+                            if (type != 'edit') {
+                                SERVER.post('billCategory/addSub', formCont).then(function (res) {
+                                    if (res.data.code === 200) {
+                                        showNotify('保存成功！');
+                                        F.activeWindow.close();
+                                    } else {
+                                        showNotify(res.data.msg);
+                                    }
+                                })
+                            }
+                            if (type == 'edit') {
+                                formCont.categorySubId = categorySubId;
+                                SERVER.post('billCategory/updateSub', formCont).then(function (res) {
+                                    if (res.data.code === 200) {
+                                        showNotify('保存成功！');
+                                        F.activeWindow.close();
+                                    } else {
+                                        showNotify(res.data.msg);
+                                    }
+                                })
+                            }
+                        }
+                    }, {
+                    type: 'button', 
+                    text: '取消', 
+                    iconFont: 'f-iconfont-close',
+                    validateForm: 'form',
+                    marginLeft: 10,
+                    handler: function () {
+                        parent.removeActiveTab();
+                            //返回父页面
+                            var reParent = window.parent.document.getElementById("mainTabStrip").getElementsByTagName('iframe')[1].contentWindow;
+                            reParent.refreshCustomr()
+                    }
+                }],
+
+                bars: [{
+                    type: 'toolbar',
+                    align: 'left',
+                    items: [{
+                        type: 'button',
+                        text: '返回',
+                        iconFont: 'f-iconfont-back',
+                        handler: function () {
+                            parent.removeActiveTab();
+                            //返回父页面
+                            var reParent = window.parent.document.getElementById("mainTabStrip").getElementsByTagName('iframe')[1].contentWindow;
+                            reParent.refreshCustomr()
+                        }
+                    }]
+                }],
+                listeners: {
+                    render: function () {
+                        if (type === 'edit') {
+                            SERVER.getList('billCategory/getSub', {
+                                categorySubId: categorySubId
+                            }).then(
+                                function (res) {
+                                    if (res.data.code === 200) {
+                                        var data = res.data.data;
+                                        var formData = F.ui.form.getFormFields();
+                                        var ids = formData.map(function (item) {
+                                            return item.id
+                                        });
+                                        ids.map(function (item) {
+                                            var field = item.replace(/^LT/, '');
+                                            if (data[field] === '' || data[field] === 'subCateIds') {
+                                                return
+                                            }
+                                            F.ui[item].setValue(data[field])
+                                        })
+                                    }
+                                })
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>
+</body>
+
+</html>

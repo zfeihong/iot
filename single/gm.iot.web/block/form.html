@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+
+    <link href="../F/F.css" rel="stylesheet" />
+    <link href="../res/css/common.css" rel="stylesheet" />
+
+    <style>
+        body.f-body {
+            overflow-x: hidden;
+        }
+
+        .myblockform .f-panel-body .f-field {
+            margin: 0;
+        }
+    </style>
+
+</head>
+<body class="f-body-bgcolor">
+    <div id="wrap1">
+    </div>
+
+
+
+    <script src="../F/F.js"></script>
+    <script src="../res/js/common.js"></script>
+    <script>
+        F.ready(function () {
+
+            F.create({
+                type: 'panel', renderTo: '#wrap1', border: false, isFluid: true, header: false,
+                layout: {
+                    space: 20, type: 'block'
+                },
+                items: [{
+                    type: 'panel', blockMD: 6,
+                    layout: {
+                        space: 20, type: 'block'
+                    }, border: false, header: false,
+                    items: [{
+                        type: 'panel', id: 'form1', cls: 'blockpanel myblockform', blockMD: 12, bodyPadding: 10, title: '表单 1', collapsible: true,
+                        layout: {
+                            space: 20, type: 'block'
+                        },
+                        items: [{
+                            type: 'label', blockMD: 6, fieldLabel: '标签', value: '标签的值'
+                        }, {
+                            type: 'checkbox', blockMD: 6, fieldLabel: '复选框', checked: false, inputLabel: '复选框', inputValue: 'ctl02_ctl00_Panel1_CheckBox1'
+                        }, {
+                            type: 'dropdownlist', blockMD: 6, redStar: true, fieldLabel: '下拉列表', required: true, hiddenName: 'ctl02$ctl00$Panel1$DropDownList1$Value', data: [['0', '可选项 1', 1, '', ''], ['2', '可选项 2', 1, '', ''], ['3', '可选项 3', 1, '', ''], ['4', '可选项 4', 1, '', ''], ['5', '可选项 5', 1, '', ''], ['6', '可选项 6', 1, '', ''], ['7', '可选项 7', 1, '', ''], ['8', '可选项 8', 1, '', '']]
+                        }, {
+                            type: 'textbox', blockMD: 6, redStar: true, fieldLabel: '文本框', required: true
+                        }, {
+                            type: 'button', blockMD: 12, text: '验证此表单并提交', validateForm: 'form1',
+                            handler: function () {
+                                F.alert('表单验证通过！');
+                            }
+                        }]
+                    }, {
+                        type: 'panel', id: 'form2', cls: 'blockpanel myblockform', blockMD: 12, bodyPadding: 10, title: '表单 2', collapsible: true,
+                        layout: {
+                            space: 20, type: 'block'
+                        },
+                        items: [{
+                            type: 'datepicker', blockMD: 6, redStar: true, fieldLabel: '日期', required: true, emptyText: '请选择日期', value: '2014-07-10', editable: false
+                        }, {
+                            type: 'timepicker', blockMD: 6, redStar: true, fieldLabel: '时间', required: true, emptyText: '请选择时间', value: '08:30', increment: 30, editable: false
+                        }, {
+                            type: 'checkbox', blockMD: 12, fieldLabel: '是否在读', checked: false, inputValue: 'ctl02_ctl00_Panel2_cbxAtSchool'
+                        }, {
+                            type: 'checkboxlist', blockMD: 12, fieldLabel: '复选框列表', columnNumber: 3, value: ["value2", "value3", "value4", "value5"], data: [['value1', '可选项 1'], ['value2', '可选项 2'], ['value3', '可选项 3'], ['value4', '可选项 4'], ['value5', '可选项 5']]
+                        }, {
+                            type: 'radiobuttonlist', blockMD: 12, fieldLabel: '单选框列表', required: true, columnNumber: 3, value: null, data: [['value1', '可选项 1'], ['value2', '可选项 2'], ['value3', '可选项 3'], ['value4', '可选项 4'], ['value5', '可选项 5']]
+                        }],
+                        bars: [{
+                            type: 'toolbar', align: 'center', position: 'bottom',
+                            items: [{
+                                type: 'button', text: '验证此表单并提交', validateForm: 'form2',
+                                handler: function () {
+                                    F.alert('表单验证通过！');
+                                }
+                            }]
+                        }]
+                    }]
+                }, {
+                    type: 'panel', id: 'form3', cls: 'blockpanel myblockform', blockMD: 6, bodyPadding: 10, title: '表单 3', collapsible: true,
+                    layout: {
+                        space: 20, type: 'block'
+                    },
+                    items: [{
+                        type: 'label', blockMD: 6, fieldLabel: '电话', value: '0551-1234567'
+                    }, {
+                        type: 'label', blockMD: 6, fieldLabel: '申请人', value: 'admin'
+                    }, {
+                        type: 'label', blockMD: 6, fieldLabel: '编号', value: '200804170006'
+                    }, {
+                        type: 'textbox', blockMD: 6, redStar: true, fieldLabel: '电子邮箱', required: true, regex: {}, regexText: '请输入有效的邮箱地址'
+                    }, {
+                        type: 'dropdownlist', blockMD: 12, redStar: true, fieldLabel: '审批人', required: true, emptyText: '请选择审批人', hiddenName: 'ctl02$Panel3$DropDownList3$Value', data: [['0', '老大甲', 1, '', ''], ['1', '老大乙', 1, '', ''], ['2', '老大丙', 1, '', ''], ['3', '老大丁', 1, '', ''], ['4', '老大午', 1, '', ''], ['5', '老大己', 1, '', '']]
+                    }, {
+                        type: 'numberbox', blockMD: 12, redStar: true, fieldLabel: '申请数量', required: true, noDecimal: true, noNegative: true, maxValue: 1000
+                    }, {
+                        type: 'textarea', blockMD: 12, redStar: true, fieldLabel: '描述', required: true
+                    }, {
+                        type: 'panel', blockMD: 12, border: false, header: false,
+                        items: [{
+                            type: 'button', text: '验证此表单并提交', validateForm: 'form3',
+                            handler: function () {
+                                F.alert('表单验证通过！');
+                            }
+                        }]
+                    }]
+                }]
+            });
+
+
+
+
+        });
+    </script>
+</body>
+</html>

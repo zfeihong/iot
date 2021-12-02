@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+
+    <link href="../F/F.css" rel="stylesheet" />
+    <link href="../res/css/common.css" rel="stylesheet" />
+
+    <style>
+        body.f-body {
+            overflow-x: hidden;
+        }
+
+        .f-field {
+            margin-bottom: 0 !important;
+        }
+    </style>
+
+</head>
+<body class="f-body-bgcolor">
+    <div id="wrap1_content" style="display:none;">
+        <h4>响应式布局</h4>
+        为了丰富页面显示效果，我们引入了业界流行的响应式布局。和 Bootstrap 的 CSS3 媒体查询实现不同，FineUI 完全通过 JavaScript 来实现响应式布局，不仅可以融入现有的布局系统，而且更加灵活。
+        <br />
+        我们将容器分成了 12 块（可以自定义），然后定义子项在不同屏幕中的块大小，使其总和等于 12，从而在手机、平板、桌面和大尺寸屏幕中显示不同的布局。
+        <br />
+        <h4>布局规则</h4>
+        <ol>
+            <li>父容器定义 Layout=Block 属性。</li>
+            <li>
+                子项通过 BlockMD=6 定义块的响应宽度。
+                <ul>
+                    <li>
+                        后缀 MD 代表不同的屏幕尺寸（Block、BlockSM、BlockMD、BlockLG）。
+                    </li>
+                    <li>属性 6 代表子项占据的宽度（6-12）。</li>
+                    <li>多个子项的宽度总和等于 12，则占据一行，多余的子项会另起一行。</li>
+                </ul>
+            </li>
+        </ol>
+        <br />
+        <h4>响应规则</h4>
+        <table class="result" style="width: 100%;">
+            <tr>
+                <td></td>
+                <td style="font-weight: normal;">超小屏幕（手机）</td>
+                <td style="font-weight: normal;">小屏幕（平板）</td>
+                <td style="font-weight: normal;">中等屏幕（桌面）</td>
+                <td style="font-weight: normal;">大屏幕（大尺寸显示器）</td>
+            </tr>
+            <tr>
+                <td>屏幕尺寸</td>
+                <td>&lt; 768px</td>
+                <td>&gt;= 768px</td>
+                <td>&gt;= 992px</td>
+                <td>&gt;= 1200px</td>
+            </tr>
+            <tr>
+                <td>子项属性</td>
+                <td>Block</td>
+                <td>BlockSM</td>
+                <td>BlockMD</td>
+                <td>BlockLG</td>
+            </tr>
+            <tr>
+                <td>响应行为</td>
+                <td>始终水平排列</td>
+                <td colspan="3">当前屏幕水平排列，小于临界值层叠排列</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="wrap1">
+    </div>
+    <br />
+    <br />
+    中等屏幕水平排列，小屏幕层叠排列：
+    <br />
+    <br />
+    <div id="wrap2"></div>
+    <br />
+    <br />
+    大屏幕水平排列，中等屏幕分两行显示，小屏幕层叠排列：
+    <br />
+    <br />
+    <div id="wrap3"></div>
+    <br />
+    <br />
+    通过 BlockConfigSpace=10 设置子项之间的间距：
+    <br />
+    <br />
+    <div id="wrap4"></div>
+
+
+    <script src="../F/F.js"></script>
+    <script src="../res/js/common.js"></script>
+    <script>
+        F.ready(function () {
+
+            F.create({
+                type: 'panel', renderTo: '#wrap1', cls: 'blockpanel', contentEl: '#wrap1_content', bodyPadding: 10, isFluid: true, header: false
+            });
+
+            F.create({
+                type: 'panel', renderTo: '#wrap2', cls: 'blockpanel', layout: 'block', bodyPadding: 10, isFluid: true, header: false,
+                items: [{
+                    type: 'panel', blockMD: 6, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockMD=6'
+                    }]
+                }, {
+                    type: 'panel', blockMD: 6, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockMD=6'
+                    }]
+                }]
+            });
+
+            F.create({
+                type: 'panel', renderTo: '#wrap3', cls: 'blockpanel', layout: 'block', bodyPadding: 10, isFluid: true, header: false,
+                items: [{
+                    type: 'panel', blockMD: 6, blockLG: 4, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockMD=6<br/>BlockLG=4'
+                    }]
+                }, {
+                    type: 'panel', blockMD: 6, blockLG: 4, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockMD=6<br/>BlockLG=4'
+                    }]
+                }, {
+                    type: 'panel', blockMD: 12, blockLG: 4, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockMD=12<br/>BlockLG=4'
+                    }]
+                }]
+            });
+
+            F.create({
+                type: 'panel', renderTo: '#wrap4', cls: 'blockpanel',
+                layout: {
+                    space: 10, type: 'block'
+                }, bodyPadding: 10, isFluid: true, header: false,
+                items: [{
+                    type: 'panel', blockSM: 6, blockMD: 9, blockLG: 4, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockSM=6<br/>BlockMD=9<br/>BlockLG=4'
+                    }]
+                }, {
+                    type: 'panel', blockSM: 6, blockMD: 3, blockLG: 4, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockSM=6<br/>BlockMD=3<br/>BlockLG=4'
+                    }]
+                }, {
+                    type: 'panel', blockSM: 12, blockMD: 12, blockLG: 4, bodyPadding: 10, header: false,
+                    items: [{
+                        type: 'label', value: 'BlockSM=12<br/>BlockMD=12<br/>BlockLG=4'
+                    }]
+                }]
+            });
+
+
+        });
+    </script>
+</body>
+</html>

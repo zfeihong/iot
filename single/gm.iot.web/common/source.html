@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+    <link href="../F/F.css" rel="stylesheet" />
+    <link href="../res/css/common.css" rel="stylesheet" />
+
+
+
+</head>
+<body>
+
+    <script src="../F/F.js"></script>
+    <script src="../res/js/common.js"></script>
+    <script>
+        F.ready(function () {
+
+            var filesStr = decodeURIComponent(document.location.search.substr('?files='.length));
+            var files = filesStr.split(';');
+
+            var tabs = [];
+            $.each(files, function (index, filePath) {
+                var fileName = filePath;
+                var slashIndex = filePath.lastIndexOf('/');
+                if (slashIndex >= 0) {
+                    fileName = filePath.substr(slashIndex + 1);
+                }
+
+                // ?file=main.html
+                if (fileName.indexOf('?file=') === 0) {
+                    fileName = fileName.substr('?file='.length);
+                }
+
+                tabs.push({
+                    type: 'tab', title: fileName, iframe: true, titleTooltip: filePath,
+                    iframeUrl: './file.html?path=' + encodeURIComponent(filePath)
+                });
+            });
+
+
+            F.create({
+                type: 'viewport', renderTo: document.body, layout: 'fit',
+                items: [{
+                    type: 'tabstrip', width: 750, height: 350, tabPosition: 'top', activeTabIndex: 0, items: tabs, border: false
+                }]
+            });
+
+
+
+        });
+    </script>
+</body>
+</html>

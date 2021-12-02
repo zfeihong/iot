@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="/f/f.css">
+    <link rel="stylesheet" href="/res/css/common.css">
+
+</head>
+
+<body>
+
+    <div id="wrap1"></div>
+
+    <script src="/f/f.js"></script>
+    <script src="/res/js/common.js"></script>
+    <script src="/plugins/es6-promise.auto.min.js"></script>
+    <script src="/plugins/es6-promise.min.js"></script>
+    <script src="/plugins/axios.min.js"></script>
+    <script src="/api/index.js"></script>
+
+    <script>
+        function openxjFUI(type, rowId) {
+            var billURL = '/pages/product/iframe/productCreate.html?type=' + type;
+            if (rowId != undefined) {
+                billURL = '/pages/product/iframe/productCreate.html?type=' + type + '&custId=' + rowId;
+            }
+            parent.addExampleTab({
+                id: 'customerDataNew_tab',
+                iframeUrl: billURL,
+                title: '创建产品',
+                icon: '/res/images/filetype/vs_aspx.png',
+                refreshWhenExist: true
+            });
+        } 
+       //客户编辑时返回列表刷新界面
+        function refreshCustomr(){
+            var grid1 = F.ui.grid1;
+            //F.ui.grid1.loadDataUrl(BASEURL + '/api/billCustomer/list')
+        }
+        
+
+        F.ready(function () {
+            var loctionType;
+            var formCont = {};
+            // 地理位置三级联动
+            function getLocation(type, id, pCode) {
+                SERVER.getList('assetCate/dropDown', { type: type, pCateId: pCode }).then(
+                    function (res) {
+                        if (res.status === 200) {
+                            res.data.data.splice(0, 0, ['', '请选择'])
+                            F.ui[id].loadData(res.data.data)
+                        }
+                    }
+                )
+            } 
+
+            F.ui({
+                type: 'panel',
+                layout: 'vbox',
+                bodyPadding: 5,
+                isViewPort: true,
+                header: false,
+                border: false,
+                renderTo: '#wrap1',
+                items: [{
+                    type: 'grid',
+                    id: 'grid1',
+                    title: '产品（设备模型）',
+                    flex: 1,
+                    cellEditing: true,
+                    databasePaging: true,
+                    multiSelect: true,
+                    checkboxSelect: true,
+                    databasePaging: true,
+                    paging: true,
+                    pageSize: 20,
+                    pageIndex: 0,
+                    emptyText: '暂无数据！',
+                    columns: [{
+                        text: '#', align: 'center', columnType: 'rownumberfield'
+                    }, {
+                        text: '产品名称', field: 'productName', width: 250
+                    }, {
+                        text: '产品编号(唯一)', field: 'productKey', width: 120, align: 'center'
+                    }, {
+                        text: '节点类型', field: 'nodeType', width: 120, align: 'center'
+                    }, {
+                        text: '创建时间', field: 'createTime', width: 120, align: 'center'
+                    },{
+                        text: '操作', field: '', width: 120, align: 'center', locked: true,
+                        renderer: function (value, params) {
+                            return '<a href="javascript:;" class="btnDelete">删除</a>'
+                        }
+                    }],
+                    idField: 'productKey',
+                    //dataUrl: BASEURL + '/api/billCustomer/list',
+                    bars: [{
+                        type: 'toolbar',
+                        items: [{
+                            type: 'button',
+                            text: '创建',
+                            iconFont: 'f-icon-plus-circle',
+                            handler: function () {
+                                openxjFUI('newadded');
+                            }
+                        },{
+                                id: 'ProductName',
+                                type: 'textbox',
+                                width: 180,
+                                emptyText: '请输入产品名称', 
+                            },{
+                                type: 'button',
+                                text: '查询',
+                                //style: 'margin-left:45%;',
+                                validateForm: 'form',
+                                handler: function () {
+                                    var formData = F.ui.form.getFormFields();
+                                    var ids = formData.map(function (item) {
+                                        return item.id;
+                                    });
+                                    if (F.ui.LTlocationId.getValue() != '' && F.ui.LTlocationId.getValue() != undefined) {
+                                        if (F.ui.LTlocationId1.getValue() === '') {
+                                            showNotify('位置分类请从二级开始查找！');
+                                            return;
+                                        }
+                                    }
+                                    ids.map(function (item) {
+                                        var field = item.replace(/^LT/, '');
+                                        if (F.ui[item].getValue() === '') {
+                                            delete formCont[field]
+                                        }
+                                        formCont[field] = F.ui[item].getValue()
+                                        if (field === 'locationId' || field === 'locationId1' || field === 'locationId2' || field === 'locationId3') {
+                                            delete formCont[field]
+                                        }
+
+                                    })
+                                    if (loctionType != '') {
+                                        formCont.locId = loctionType;
+                                    }
+                                    //F.ui.grid1.loadDataUrl(BASEURL + '/api/billCustomer/list', formCont)
+                                }
+                            }]
+                    }],
+                    pagingbar: {
+                        type: 'pagingtoolbar',
+                        items: ['-', {
+                            type: 'toolbartext',
+                            text: '每页记录数：'
+                        }, {
+                                type: 'dropdownlist',
+                                editable: true,
+                                width: 65,
+                                data: ['10', '20', '50', '100'],
+                                value: '20',
+                                listeners: {
+                                    change: function () {
+                                        //var grid1 = F.ui.grid1;
+                                        //grid1.setPageSize(this.getValue());
+                                        //grid1.loadDataUrl(BASEURL + '/api/billCustomer/list');
+                                    }
+                                }
+                            }]
+                    },
+                    listeners: {
+                        rowdblclick: function (event, rowId, rowIndex) {
+                            openxjFUI('modified', rowId);
+                        },
+                        paging: function (event, pageIndex) {
+                            //var grid1 = F.ui.grid1;
+                            //grid1.loadDataUrl(BASEURL + '/api/billCustomer/list', formCont);
+                        },
+                    }
+                }],
+                listeners: {
+                    render: function () {
+                        // 位置
+                        SERVER.getList('location/dropDown').then(
+                            function (res) {
+                                if (res.status === 200) {
+                                    res.data.data.splice(0, 0, ['', '全部'])
+                                    F.ui.LTlocationId.loadData(res.data.data, '')
+                                }
+                            }
+                        )
+                    }
+                }
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+
+    <link href="../F/F.css" rel="stylesheet" />
+    <link href="../res/css/common.css" rel="stylesheet" />
+</head>
+<body>
+    
+
+
+    <script src="../F/F.js"></script>
+    <script src="../res/js/common.js"></script>
+    <script>
+        F.ready(function () {
+
+            F.create({
+                type: 'window', id: 'window1', layout: 'anchor', width: 350, iconFont: 'sign-in', bodyPadding: '10px', title: '登录表单', modal: false, closable: false, goldenPosition: true, renderTo: document.body,
+                items: [{
+                    type: 'textbox', redStar: true, fieldLabel: '用户名', required: true
+                }, {
+                    type: 'textbox', redStar: true, fieldLabel: '密码', required: true, inputType: 'password'
+                }],
+                bars: [{
+                    type: 'toolbar', align: 'right', position: 'bottom',
+                    items: [{
+                        type: 'button', id: 'btnLogin', text: '登录', cls: 'f-btn-success', validateForm: 'window1', validateTarget: '_top',
+                        handler: function () {
+                            F.alert('客户端验证通过！');
+                        }
+                    }, {
+                        type: 'button', text: '重置', cls: 'f-btn-gray',
+                        handler: function () {
+                            F.reset();
+                        }
+                    }]
+                }]
+            });
+
+            F.submitbutton = 'btnLogin';
+
+
+
+
+        });
+    </script>
+</body>
+</html>

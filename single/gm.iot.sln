@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31903.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.edge_gateway", "1.edge_gateway", "{F4383D4A-E055-4C82-8D77-04E2AA5ACB94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2.clound_service", "2.clound_service", "{60DD95BF-6DE3-448F-87CC-4FC1EB3C3214}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gm.iot.client", "gm.iot.client\gm.iot.client.csproj", "{46D2586E-6E7C-4FC2-BB84-B14EA9DF4E18}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gm.iot.server", "gm.iot.server\gm.iot.server.csproj", "{AD3D703A-B3B1-492D-973E-D6029E66EA03}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.test", "3.test", "{5D26DB00-2273-4602-9907-B304BE669821}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gm.iot.domain", "gm.iot.domain\gm.iot.domain.csproj", "{2CA09568-6E1A-47DB-A78B-5C8526E09F34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gm.iot.application", "gm.iot.application\gm.iot.application.csproj", "{86CCD2AD-A745-4BE4-A797-0D8C7FF62BAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46D2586E-6E7C-4FC2-BB84-B14EA9DF4E18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46D2586E-6E7C-4FC2-BB84-B14EA9DF4E18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46D2586E-6E7C-4FC2-BB84-B14EA9DF4E18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46D2586E-6E7C-4FC2-BB84-B14EA9DF4E18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD3D703A-B3B1-492D-973E-D6029E66EA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD3D703A-B3B1-492D-973E-D6029E66EA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD3D703A-B3B1-492D-973E-D6029E66EA03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD3D703A-B3B1-492D-973E-D6029E66EA03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CA09568-6E1A-47DB-A78B-5C8526E09F34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CA09568-6E1A-47DB-A78B-5C8526E09F34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CA09568-6E1A-47DB-A78B-5C8526E09F34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CA09568-6E1A-47DB-A78B-5C8526E09F34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86CCD2AD-A745-4BE4-A797-0D8C7FF62BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86CCD2AD-A745-4BE4-A797-0D8C7FF62BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86CCD2AD-A745-4BE4-A797-0D8C7FF62BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86CCD2AD-A745-4BE4-A797-0D8C7FF62BAC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{46D2586E-6E7C-4FC2-BB84-B14EA9DF4E18} = {F4383D4A-E055-4C82-8D77-04E2AA5ACB94}
+		{AD3D703A-B3B1-492D-973E-D6029E66EA03} = {60DD95BF-6DE3-448F-87CC-4FC1EB3C3214}
+		{2CA09568-6E1A-47DB-A78B-5C8526E09F34} = {60DD95BF-6DE3-448F-87CC-4FC1EB3C3214}
+		{86CCD2AD-A745-4BE4-A797-0D8C7FF62BAC} = {60DD95BF-6DE3-448F-87CC-4FC1EB3C3214}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A94BC4CA-1727-4C30-BBA5-6EEAAAF95E7C}
+	EndGlobalSection
+EndGlobal
