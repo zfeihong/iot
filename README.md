@@ -1,6 +1,6 @@
 # Gm IoT Platform
 
-**Gm IoT Platform ** is a complete **infrastructure** based on the **.NET 6** to create **iot edge gateway ** and **iot cloud** by following the software development **best practices** and the **latest technologies**.
+**Gm IoT Platform** is a complete **infrastructure** based on the **.NET 6** to create **iot edge gateway ** and **iot cloud** by following the software development **best practices** and the **latest technologies**.
 
 ## Getting Started
 
