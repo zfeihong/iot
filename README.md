@@ -28,7 +28,7 @@ Gm provides a **full stack developer experience**.
 
 ### Architecture
 
-
+![](docs/en/images/iot-architecture.png)
 
 ### Infrastructure
 
