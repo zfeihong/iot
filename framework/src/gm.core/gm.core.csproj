@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="gm\di\" />
+    <Folder Include="gm\reflection\" />
+    <Folder Include="gm\validation\" />
+    <Folder Include="gm\exception\" />
+    <Folder Include="gm\text\" />
+    <Folder Include="gm\log\" />
+    <Folder Include="gm\io\" />
+    <Folder Include="gm\" />
+  </ItemGroup>
+
 </Project>

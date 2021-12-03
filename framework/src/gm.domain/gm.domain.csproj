@@ -7,9 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="domain\repositories\" />
-    <Folder Include="domain\services\" />
+    <Folder Include="domain\entities\events\" />
     <Folder Include="domain\values\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\gm.core\gm.core.csproj" />
   </ItemGroup>
 
 </Project>
