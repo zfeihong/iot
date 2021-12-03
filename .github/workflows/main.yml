@@ -1,0 +1,38 @@
+name: "build and test"
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'framework/**/*.cs'
+      - 'framework/**/*.cshtml'
+      - 'framework/**/*.csproj'
+      - 'framework/**/*.razor'
+      - 'single/**/*.cs'
+      - 'single/**/*.cshtml'
+      - 'single/**/*.csproj'
+      - 'single/**/*.razor'
+
+  pull_request:
+    paths:
+      - 'framework/**/*.cs'
+      - 'framework/**/*.cshtml'
+      - 'framework/**/*.csproj'
+      - 'framework/**/*.razor'
+      - 'single/**/*.cs'
+      - 'single/**/*.cshtml'
+      - 'single/**/*.csproj'
+      - 'single/**/*.razor'
+jobs:
+  build-test:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-dotnet@master
+      with:
+        dotnet-version: 6.0.100
+
+    - name: Build All
+      run: .\build-all.ps1
+      working-directory: .\build
+      shell: powershell
