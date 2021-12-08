@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace gm.application.services
+namespace gm.system.extentions
 {
-    public interface IApplicationService
+    public class ConventionalRegistrationExtensions
     {
-
     }
 }
