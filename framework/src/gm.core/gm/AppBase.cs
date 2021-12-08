@@ -1,19 +1,21 @@
-﻿using gm.modularity;
-using gm.system;
+﻿using gm.di;
+using gm.modularity;
+using gm.system.extentions;
 using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection; 
+using Microsoft.Extensions.DependencyInjection;
 
-namespace gm.core.gm
+namespace gm.core
 {
+    /// <summary>
+    /// app product
+    /// </summary>
     public abstract class AppBase : IApp
     {
         [NotNull]
         public Type StartupModule { get; }
 
         public IServiceProvider ServiceProvider { get; private set; }
-
         public IServiceCollection Services { get; }
-
         public IReadOnlyList<IModuleDescriptor> Modules { get; }
 
         internal AppBase(
@@ -32,11 +34,27 @@ namespace gm.core.gm
             services.AddSingleton<IApp>(this);
             services.AddSingleton<IModuleContainer>(this);
 
-            services.AddCoreServices(this,options);
+            services.AddMicroSoftServices(this, options);
 
             Modules = LoadModules(services, options);
             ConfigureServices();
 
+        }
+
+        protected virtual void SetServiceProvider(IServiceProvider serviceProvider)
+        {
+            ServiceProvider = serviceProvider;
+            ServiceProvider.GetRequiredService<ObjectAccessor<IServiceProvider>>().Value = ServiceProvider;
+        }
+
+        protected virtual void InitializeModules()
+        {
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                scope.ServiceProvider
+                    .GetRequiredService<IModuleManager>()
+                    .InitModules(new AppInitContext(scope.ServiceProvider));
+            }
         }
 
         protected virtual IReadOnlyList<IModuleDescriptor> LoadModules(IServiceCollection services, AppCreationOptions options)
@@ -51,13 +69,18 @@ namespace gm.core.gm
         }
 
 
-        public void Dispose()
+        public virtual void Dispose()
         {
         }
 
         public void Shutdown()
         {
-            throw new NotImplementedException();
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                scope.ServiceProvider
+                    .GetRequiredService<IModuleManager>()
+                    .ShutdownModules(new AppShutdownContext(scope.ServiceProvider));
+            }
         }
 
         protected virtual void ConfigureServices()
@@ -67,47 +90,39 @@ namespace gm.core.gm
 
             foreach (var module in Modules)
             {
-                if (module.Instance is ModuleBase ModuleBase)
-                {
-                    ModuleBase.ServiceCfgContext = context;
-                }
+                if (module.Instance is ModuleBaba ModuleBaba) ModuleBaba.ServiceCfgContext = context;
             }
 
             //PreConfigureServices
-            //foreach (var module in Modules.Where(m => m.Instance is IPreConfigureServices))
-            //{
-            //    ((IPreConfigureServices)module.Instance).PreConfigureServices(context);
-            //}
+            foreach (var module in Modules.Where(m => m.Instance is IPreConfigureServices))
+            {
+                ((IPreConfigureServices)module.Instance).PreConfigureServices(context);
+            }
 
             //ConfigureServices
             //foreach (var module in Modules)
             //{
-            //    if (module.Instance is ModuleBase ModuleBase)
+            //    if (module.Instance is ModuleBaba ModuleBaba)
             //    {
-            //        if (!ModuleBase.SkipAutoServiceRegistration)
-            //        {
-            //            Services.AddAssembly(module.Type.Assembly);
-            //        }
+            //        if (!ModuleBaba.SkipAutoServiceRegistration) Services.AddAssembly(module.Type.Assembly);
             //    }
-
 
             //    module.Instance.ConfigureServices(context);
             //}
 
             //PostConfigureServices
-            //foreach (var module in Modules.Where(m => m.Instance is IPostConfigureServices))
-            //{
+            foreach (var module in Modules.Where(m => m.Instance is IPostConfigureServices))
+            {
+                ((IPostConfigureServices)module.Instance).PostConfigureServices(context);
+            }
 
-            //    ((IPostConfigureServices)module.Instance).PostConfigureServices(context);
-            //}
-
-            //foreach (var module in Modules)
-            //{
-            //    if (module.Instance is ModuleBase ModuleBase)
-            //    {
-            //        ModuleBase.ServiceCfgContext = null;
-            //    }
-            //}
+            foreach (var module in Modules)
+            {
+                if (module.Instance is ModuleBaba ModuleBaba)
+                {
+                    ModuleBaba.ServiceCfgContext = null;
+                }
+            }
         }
     }
 }

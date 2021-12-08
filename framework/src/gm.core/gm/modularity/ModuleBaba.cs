@@ -1,10 +1,12 @@
 ﻿using JetBrains.Annotations;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace gm.modularity
 {
-    public abstract class ModuleBase : IModule
+    /// <summary>
+    /// module root
+    /// </summary>
+    public abstract class ModuleBaba : IModule
     {
         protected internal ServiceCfgContext ServiceCfgContext
         {
@@ -17,36 +19,36 @@ namespace gm.modularity
         protected internal bool SkipAutoServiceRegistration { get; protected set; }
 
 
-        public void OnPreAppInit([NotNull] AppInitContext context)
+        public virtual void OnPreAppInit([NotNull] AppInitContext context)
         {
 
         }
 
-        public void OnAppInit([NotNull] AppInitContext context)
+        public virtual void OnAppInit([NotNull] AppInitContext context)
         {
 
         }
 
-        public void OnPostAppInit([NotNull] AppInitContext context)
+        public virtual void OnPostAppInit([NotNull] AppInitContext context)
         {
 
         }
 
-        public void PreCfgServices(ServiceCfgContext context)
+        public virtual void PreCfgServices(ServiceCfgContext context)
         {
 
         }
 
-        public void CfgService(ServiceCfgContext context)
+        public virtual void CfgService(ServiceCfgContext context)
         {
 
         }
-        public void PostCfgServices(ServiceCfgContext context)
+        public virtual void PostCfgServices(ServiceCfgContext context)
         {
 
         }
 
-        public void OnAppShutdown([NotNull] AppShutdownContext context)
+        public virtual void OnAppShutdown([NotNull] AppShutdownContext context)
         {
 
         }

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="gm\di\" />
     <Folder Include="gm\reflection\" />
     <Folder Include="gm\validation\" />
     <Folder Include="gm\exception\" />

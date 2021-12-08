@@ -1,4 +1,4 @@
-﻿using gm.system;
+﻿using gm.system.extentions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace gm.modularity
@@ -83,11 +83,11 @@ namespace gm.modularity
 
         protected virtual void SetDependencies(List<ModuleDescriptor> modules, ModuleDescriptor descriptors)
         {
-            foreach (var dependedModuleType in ModuleHelper.FindDependedModules(descriptors.Type))
+            foreach (var dependedModule in ModuleHelper.FindDependedModules(descriptors.Type))
             {
-                var module = modules.FirstOrDefault(m => m.Type == dependedModuleType);
+                var module = modules.FirstOrDefault(m => m.Type == dependedModule);
                 if (module == null)
-                    throw new Exception("Could not find a depended module " + dependedModuleType.AssemblyQualifiedName + " for " + module.Type.AssemblyQualifiedName);
+                    throw new Exception("Could not find a depended module " + dependedModule.AssemblyQualifiedName + " for " + module.Type.AssemblyQualifiedName);
 
                 descriptors.AddDependency(module);
             }

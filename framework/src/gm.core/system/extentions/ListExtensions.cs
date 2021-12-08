@@ -1,4 +1,4 @@
-﻿namespace gm.system
+﻿namespace gm.system.extentions
 {
     public static class ListExtensions
     {

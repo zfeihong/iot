@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
-namespace gm.system
+namespace gm.system.extentions
 {
     public static class CommonExtensions
     {
@@ -35,6 +32,33 @@ namespace gm.system
             }
 
             return service;
+        }
+
+        public static IServiceProvider BuildServiceProviderFromFactory([NotNull] this IServiceCollection services)
+        {
+            foreach (var service in services)
+            {
+                var factoryInterface = service.ImplementationInstance?.GetType()
+                    .GetTypeInfo()
+                    .GetInterfaces()
+                    .FirstOrDefault(i => i.GetTypeInfo().IsGenericType &&
+                                         i.GetGenericTypeDefinition() == typeof(IServiceProviderFactory<>));
+
+                if (factoryInterface == null)
+                {
+                    continue;
+                }
+
+                var containerBuilderType = factoryInterface.GenericTypeArguments[0];
+                return (IServiceProvider)typeof(CommonExtensions)
+                    .GetTypeInfo()
+                    .GetMethods()
+                    .Single(m => m.Name == nameof(BuildServiceProviderFromFactory) && m.IsGenericMethod)
+                    .MakeGenericMethod(containerBuilderType)
+                    .Invoke(null, new object[] { services, null });
+            }
+
+            return services.BuildServiceProvider();
         }
     }
 }

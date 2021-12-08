@@ -3,18 +3,20 @@ using gm.modularity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace gm.system
+namespace gm.system.extentions
 {
     internal static class ServiceCollectionExtensions
     {
-        internal static void AddCoreServices(this IServiceCollection services, IApp app, AppCreationOptions options)
+        internal static void AddMicroSoftServices(this IServiceCollection services, IApp app, AppCreationOptions options)
         {
             services.AddOptions();
             services.AddLogging();
             services.AddLocalization();
+
+            AddGmServices(services, app, options);
         }
 
-        internal static void AddGmCoreServices(this IServiceCollection services,
+        internal static void AddGmServices(this IServiceCollection services,
            IApp app,
            AppCreationOptions options)
         {
