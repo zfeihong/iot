@@ -6,7 +6,14 @@ namespace gm.modularity
     /// <summary>
     /// module root
     /// </summary>
-    public abstract class ModuleBaba : IModule
+    public abstract class ModuleBaba : 
+        IModule, 
+        IPreCfgServices,
+        IPostCfgServices,
+        IOnPreAppInit,
+        IOnAppInit,
+        IOnPostAppInit,
+        IOnAppShutdown
     {
         protected internal ServiceCfgContext ServiceCfgContext
         {

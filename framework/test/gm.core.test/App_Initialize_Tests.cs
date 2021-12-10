@@ -15,22 +15,22 @@ namespace gm.core.test
             {
                 //Assert
                 var module = app.Services.GetSingletonInstance<TestDependedModule>();
-                module.PreConfigureServicesIsCalled.ShouldBeTrue();
-                module.ConfigureServicesIsCalled.ShouldBeTrue();
-                module.PostConfigureServicesIsCalled.ShouldBeTrue();
+                module.PreCfgServicesIsCalled.ShouldBeTrue();
+                //module.CfgServicesIsCalled.ShouldBeTrue();
+                module.PostCfgServicesIsCalled.ShouldBeTrue();
 
                 //Act
                 app.Initialize();
 
                 //Assert
                 app.ServiceProvider.GetRequiredService<TestDependedModule>().ShouldBeSameAs(module);
-                module.OnApplicationInitializeIsCalled.ShouldBeTrue();
+                module.OnAppInitisCalled.ShouldBeTrue();
 
                 //Act
                 app.Shutdown();
 
                 //Assert
-                module.OnApplicationShutdownIsCalled.ShouldBeTrue();
+                module.OnAppShutdownIsCalled.ShouldBeTrue();
             }
         }
 

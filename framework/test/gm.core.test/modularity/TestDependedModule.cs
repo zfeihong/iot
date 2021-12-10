@@ -8,7 +8,18 @@ namespace gm.test.modularity
         public override void PreCfgServices(ServiceCfgContext context)
         {
             base.PreCfgServices(context);
+
             SkipAutoServiceRegistration = true;
+        }
+
+        public override void PostCfgServices(ServiceCfgContext context)
+        {
+            base.PostCfgServices(context);
+        }
+
+        public override void OnAppInit(AppInitContext context)
+        {
+            base.OnAppInit(context);
         }
     }
 }

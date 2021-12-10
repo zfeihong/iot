@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Linq;
 
 namespace gm.modularity
 {
@@ -33,12 +32,7 @@ namespace gm.modularity
             LogListOfModules();
 
             foreach (var contributor in _lifecycleContributors)
-            {
-                foreach (var module in _moduleContainer.Modules)
-                {
-                    contributor.Initialize(context, module.Instance);
-                }
-            }
+                foreach (var module in _moduleContainer.Modules) contributor.Initialize(context, module.Instance);
 
             _logger.LogInformation("Initialized all modules.");
         }
@@ -48,9 +42,7 @@ namespace gm.modularity
             _logger.LogInformation("Loaded modules:");
 
             foreach (var module in _moduleContainer.Modules)
-            {
                 _logger.LogInformation("- " + module.Type.FullName);
-            }
         }
 
         public void ShutdownModules(AppShutdownContext context)
@@ -58,12 +50,7 @@ namespace gm.modularity
             var modules = _moduleContainer.Modules.Reverse().ToList();
 
             foreach (var contributor in _lifecycleContributors)
-            {
-                foreach (var module in modules)
-                {
-                    contributor.Shutdown(context, module.Instance);
-                }
-            }
+                foreach (var module in modules) contributor.Shutdown(context, module.Instance);
         }
     }
 }

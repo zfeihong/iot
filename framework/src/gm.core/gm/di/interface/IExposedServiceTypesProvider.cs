@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace gm.system.extentions
+namespace gm.di
 {
-    public class ConventionalRegistrationExtensions
+    public interface IExposedServiceTypesProvider
     {
+        Type[] GetExposedServiceTypes(Type targetType);
     }
 }

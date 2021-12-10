@@ -24,7 +24,7 @@ namespace gm.core
             this.ServiceScope = base.Services.BuildServiceProviderFromFactory().CreateScope();
             base.SetServiceProvider(ServiceScope.ServiceProvider);
 
-            InitializeModules();
+            InitModules();
         }
 
         public override void Dispose()

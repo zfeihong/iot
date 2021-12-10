@@ -1,28 +1,69 @@
 ﻿using gm.core;
-using gm.system.extentions;
-using gm.test.modularity;
+using gm.di;
+using gm.modularity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
 
-Console.WriteLine("Hello, World!");
-
-using (var app = AppFactory.Create<TestDependedModule>())
+using (var application = AppFactory.Create<MyConsoleModule>())
 {
-    var module = app.Services.GetSingletonInstance<TestDependedModule>();
-    module.PreConfigureServicesIsCalled.ShouldBeTrue();
-    module.ConfigureServicesIsCalled.ShouldBeTrue();
-    module.PostConfigureServicesIsCalled.ShouldBeTrue();
+    Console.WriteLine("Initializing the application...");
+    application.Initialize();
+    Console.WriteLine("Initializing the application... OK");
 
-    //Act
-    app.Initialize();
+    //Console.WriteLine("Checking configuration...");
 
-    //Assert
-    app.ServiceProvider.GetRequiredService<TestDependedModule>().ShouldBeSameAs(module);
-    module.OnApplicationInitializeIsCalled.ShouldBeTrue();
+    //var configuration = application.ServiceProvider.GetRequiredService<IConfiguration>();
+    //if (configuration["AppSettingKey1"] != "AppSettingValue1")
+    //{
+    //    Console.WriteLine("ERROR: Could not read the configuration!");
+    //    Console.WriteLine("Press ENTER to exit!");
+    //    Console.ReadLine();
+    //    return;
+    //}
 
-    //Act
-    app.Shutdown();
+    //Console.WriteLine();
+    //Console.WriteLine("Checking configuration... OK");
 
-    //Assert
-    module.OnApplicationShutdownIsCalled.ShouldBeTrue();
+    var writers = application.ServiceProvider.GetServices<IMessageWriter>();
+    foreach (var writer in writers)
+    {
+        writer.Write();
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Press ENTER to exit!");
+    Console.ReadLine();
+}
+
+public class MyConsoleModule : ModuleBaba
+{
+
+}
+
+public interface IMessageWriter
+{
+    void Write();
+}
+
+public class ConsoleMessageWriter : IMessageWriter, ITransientDependency
+{
+    private readonly MessageSource _messageSource;
+
+    public ConsoleMessageWriter(MessageSource messageSource)
+    {
+        _messageSource = messageSource;
+    }
+
+    public void Write()
+    {
+        Console.WriteLine(_messageSource.GetMessage());
+    }
+}
+
+public class MessageSource : ITransientDependency
+{
+    public string GetMessage()
+    {
+        return "Hello Jackyfei!";
+    }
 }

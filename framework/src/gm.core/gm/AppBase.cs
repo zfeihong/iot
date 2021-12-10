@@ -13,7 +13,6 @@ namespace gm.core
     {
         [NotNull]
         public Type StartupModule { get; }
-
         public IServiceProvider ServiceProvider { get; private set; }
         public IServiceCollection Services { get; }
         public IReadOnlyList<IModuleDescriptor> Modules { get; }
@@ -26,17 +25,19 @@ namespace gm.core
             StartupModule = startupModule;
             Services = services;
 
-            //services.TryAddObjectAccessor<IServiceProvider>();
+            services.TryAddObjectAccessor<IServiceProvider>();
 
             var options = new AppCreationOptions(services);
             action?.Invoke(options);
 
             services.AddSingleton<IApp>(this);
             services.AddSingleton<IModuleContainer>(this);
+            services.AddCoreServices();
 
-            services.AddMicroSoftServices(this, options);
+            services.AddServices(this,options);
 
             Modules = LoadModules(services, options);
+
             ConfigureServices();
 
         }
@@ -45,43 +46,13 @@ namespace gm.core
         {
             ServiceProvider = serviceProvider;
             ServiceProvider.GetRequiredService<ObjectAccessor<IServiceProvider>>().Value = ServiceProvider;
-        }
-
-        protected virtual void InitializeModules()
-        {
-            using (var scope = ServiceProvider.CreateScope())
-            {
-                scope.ServiceProvider
-                    .GetRequiredService<IModuleManager>()
-                    .InitModules(new AppInitContext(scope.ServiceProvider));
-            }
-        }
+        } 
 
         protected virtual IReadOnlyList<IModuleDescriptor> LoadModules(IServiceCollection services, AppCreationOptions options)
         {
-            return services
-                .GetSingletonInstance<IModuleLoader>()
-                .LoadModules(
-                    services,
-                    StartupModule,
-                    options.PlugInList
-                );
-        }
-
-
-        public virtual void Dispose()
-        {
-        }
-
-        public void Shutdown()
-        {
-            using (var scope = ServiceProvider.CreateScope())
-            {
-                scope.ServiceProvider
-                    .GetRequiredService<IModuleManager>()
-                    .ShutdownModules(new AppShutdownContext(scope.ServiceProvider));
-            }
-        }
+            return services.GetSingletonInstance<IModuleLoader>()
+                .LoadModules(services,StartupModule,options.PlugInList);
+        } 
 
         protected virtual void ConfigureServices()
         {
@@ -89,39 +60,50 @@ namespace gm.core
             Services.AddSingleton(context);
 
             foreach (var module in Modules)
-            {
                 if (module.Instance is ModuleBaba ModuleBaba) ModuleBaba.ServiceCfgContext = context;
-            }
 
             //PreConfigureServices
-            foreach (var module in Modules.Where(m => m.Instance is IPreConfigureServices))
-            {
-                ((IPreConfigureServices)module.Instance).PreConfigureServices(context);
-            }
+            foreach (var module in Modules.Where(m => m.Instance is IPreCfgServices))
+                ((IPreCfgServices)module.Instance).PreCfgServices(context);
 
-            //ConfigureServices
-            //foreach (var module in Modules)
-            //{
-            //    if (module.Instance is ModuleBaba ModuleBaba)
-            //    {
-            //        if (!ModuleBaba.SkipAutoServiceRegistration) Services.AddAssembly(module.Type.Assembly);
-            //    }
-
-            //    module.Instance.ConfigureServices(context);
-            //}
-
-            //PostConfigureServices
-            foreach (var module in Modules.Where(m => m.Instance is IPostConfigureServices))
-            {
-                ((IPostConfigureServices)module.Instance).PostConfigureServices(context);
-            }
-
+            //CfgServices
             foreach (var module in Modules)
             {
                 if (module.Instance is ModuleBaba ModuleBaba)
-                {
-                    ModuleBaba.ServiceCfgContext = null;
-                }
+                    if (!ModuleBaba.SkipAutoServiceRegistration) Services.AddAssembly(module.Type.Assembly);
+
+                module.Instance.CfgService(context);
+            }
+
+            //PostCfgServices
+            foreach (var module in Modules.Where(m => m.Instance is IPostCfgServices))
+                ((IPostCfgServices)module.Instance).PostCfgServices(context);
+
+            foreach (var module in Modules)
+                if (module.Instance is ModuleBaba ModuleBaba) ModuleBaba.ServiceCfgContext = null;
+        }
+
+
+        public virtual void Dispose()
+        {
+        }
+
+        protected virtual void InitModules()
+        {
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<IModuleManager>()
+                    .InitModules(new AppInitContext(scope.ServiceProvider));
+            }
+        }
+
+        public virtual void Shutdown()
+        {
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                scope.ServiceProvider
+                    .GetRequiredService<IModuleManager>()
+                    .ShutdownModules(new AppShutdownContext(scope.ServiceProvider));
             }
         }
     }

@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\gm.core\gm.core.csproj" />
-    <ProjectReference Include="..\gm.core.test\gm.core.test.csproj" />
   </ItemGroup>
 
 </Project>
