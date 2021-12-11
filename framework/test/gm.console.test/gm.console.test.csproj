@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\gm.core\gm.core.csproj" />
+    <ProjectReference Include="..\..\src\gm.guid\gm.guid.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using gm.core;
 using gm.di;
+using gm.guid;
 using gm.modularity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,7 @@ using (var application = AppFactory.Create<MyConsoleModule>())
     //Console.WriteLine("Checking configuration... OK");
 
     var writers = application.ServiceProvider.GetServices<IMessageWriter>();
+
     foreach (var writer in writers)
     {
         writer.Write();
@@ -35,6 +37,7 @@ using (var application = AppFactory.Create<MyConsoleModule>())
     Console.ReadLine();
 }
 
+[Rely(typeof(GuidsModule))]
 public class MyConsoleModule : ModuleBaba
 {
 
@@ -47,15 +50,18 @@ public interface IMessageWriter
 
 public class ConsoleMessageWriter : IMessageWriter, ITransientDependency
 {
+    protected IGuidGenerator _guidGenerator { get; }
     private readonly MessageSource _messageSource;
 
-    public ConsoleMessageWriter(MessageSource messageSource)
+    public ConsoleMessageWriter(MessageSource messageSource, IGuidGenerator guidGenerator)
     {
         _messageSource = messageSource;
+        _guidGenerator = guidGenerator;
     }
 
     public void Write()
     {
+        Console.WriteLine(_guidGenerator.Create());
         Console.WriteLine(_messageSource.GetMessage());
     }
 }

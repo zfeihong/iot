@@ -7,11 +7,11 @@ namespace gm.modularity
         public static List<Type> FindAllModules(Type startupModule)
         {
             var moduleTypes = new List<Type>();
-            AddModuleAndDependenciesResursively(moduleTypes, startupModule);
+            AddModuleAndRelyResursively(moduleTypes, startupModule);
             return moduleTypes;
         }
 
-        private static void AddModuleAndDependenciesResursively(List<Type> modules, Type moduleType)
+        private static void AddModuleAndRelyResursively(List<Type> modules, Type moduleType)
         {
             CheckModuleType(moduleType);
 
@@ -20,8 +20,8 @@ namespace gm.modularity
 
             modules.Add(moduleType);
 
-            foreach (var dependedModule in FindDependedModules(moduleType))
-                AddModuleAndDependenciesResursively(modules, dependedModule);
+            foreach (var relyModule in FindRelyModules(moduleType))
+                AddModuleAndRelyResursively(modules, relyModule);
         }
 
         internal static void CheckModuleType(Type module)
@@ -43,25 +43,25 @@ namespace gm.modularity
                 typeof(IModule).GetTypeInfo().IsAssignableFrom(type);
         }
 
-        public static List<Type> FindDependedModules(Type moduleType)
+        public static List<Type> FindRelyModules(Type moduleType)
         {
             CheckModuleType(moduleType);
 
-            var dependencies = new List<Type>();
+            var rely = new List<Type>();
 
-            var dependencyDescriptors = moduleType
+            var relyDescriptors = moduleType
                 .GetCustomAttributes()
-                .OfType<IDependedProvider>();
+                .OfType<IRelyOnProvider>();
 
-            foreach (var descriptor in dependencyDescriptors)
+            foreach (var descriptor in relyDescriptors)
             {
-                foreach (var dependedModuleType in descriptor.GetDependeds())
+                foreach (var relyModuleType in descriptor.GetRelyOnTypes())
                 {
-                    dependencies.AddIfNotContains(dependedModuleType);
+                    rely.AddIfNotContains(relyModuleType);
                 }
             }
 
-            return dependencies;
+            return rely;
         }
     }
 }

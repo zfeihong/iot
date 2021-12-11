@@ -83,7 +83,7 @@ namespace gm.modularity
 
         protected virtual void SetDependencies(List<ModuleDescriptor> modules, ModuleDescriptor descriptors)
         {
-            foreach (var dependedModule in ModuleHelper.FindDependedModules(descriptors.Type))
+            foreach (var dependedModule in ModuleHelper.FindRelyModules(descriptors.Type))
             {
                 var module = modules.FirstOrDefault(m => m.Type == dependedModule);
                 if (module == null)

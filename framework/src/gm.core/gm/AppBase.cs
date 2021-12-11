@@ -32,14 +32,11 @@ namespace gm.core
 
             services.AddSingleton<IApp>(this);
             services.AddSingleton<IModuleContainer>(this);
-            services.AddCoreServices();
-
-            services.AddServices(this,options);
+            services.AddCoreServices(this,options);
 
             Modules = LoadModules(services, options);
 
             ConfigureServices();
-
         }
 
         protected virtual void SetServiceProvider(IServiceProvider serviceProvider)

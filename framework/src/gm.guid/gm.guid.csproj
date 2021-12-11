@@ -7,12 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="gm\domain\entities\events\" />
-    <Folder Include="gm\domain\values\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
+    <Compile Remove="SequentialGuidGenerator.cs" />
+    <Compile Remove="SequentialGuidGeneratorOptions.cs" />
+    <Compile Remove="SequentialGuidType.cs" />
   </ItemGroup>
 
   <ItemGroup>

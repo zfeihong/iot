@@ -9,17 +9,16 @@ namespace gm.system.extentions
 {
     internal static class AppBaseExtensions
     {
-        internal static void AddCoreServices(this IServiceCollection services)
-        {
-            services.AddOptions();
-            services.AddLogging();
-            services.AddLocalization();
-        }
-
-        internal static void AddServices(this IServiceCollection services,
+        internal static void AddCoreServices(this IServiceCollection services,
            IApp app,
            AppCreationOptions options)
         {
+            //Microsoft
+            services.AddOptions();
+            services.AddLogging();
+            services.AddLocalization();
+
+            //Gm
             var moduleLoader = new ModuleLoader();
             var assemblyFinder = new AssemblyFinder(app);
             var typeFinder = new TypeFinder(assemblyFinder);
