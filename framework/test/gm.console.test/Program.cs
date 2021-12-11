@@ -37,7 +37,7 @@ using (var application = AppFactory.Create<MyConsoleModule>())
     Console.ReadLine();
 }
 
-[Rely(typeof(GuidsModule))]
+[Rely(typeof(GmGuidsModule))]
 public class MyConsoleModule : ModuleBaba
 {
 

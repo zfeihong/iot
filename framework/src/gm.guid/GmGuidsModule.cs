@@ -2,7 +2,7 @@
 
 namespace gm.guid
 {
-    public class GuidsModule:ModuleBaba
+    public class GmGuidsModule:ModuleBaba
     {
 
     }
